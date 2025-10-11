@@ -4,7 +4,7 @@
 
 void Shell(int *A, int n);
 
-int main(int argc, int *argv[]){
+int main(int argc, char *argv[]){
   clock_t t_inicio, t_final;
   double t_intervalo;
 
@@ -15,8 +15,13 @@ int main(int argc, int *argv[]){
 
   int n, *A;
 
-  n = argv[1];
+  n = atoi(argv[1]);
   A = malloc(n * sizeof(int));
+
+  if(A == NULL){
+    printf("Error al intentar reserver memoria para %d elementos\n", n);
+    exit(1);
+  }
 
   for(int i = 0; i < n; i++){
     scanf("%d", &A[i]);
@@ -30,9 +35,9 @@ int main(int argc, int *argv[]){
   printf("\nTiempo medido: %.10f segundos.", t_intervalo);
 
   for(int i = 0; i < n; i++){
-    printf("Numero[%d]: %d", i, A[i]);
+    printf("\nNumero[%d]: %d", i, A[i]);
   }
-  
+
   exit(0);
 }
 
