@@ -5,38 +5,61 @@
 void Shell(int *A, int n);
 
 int main(int argc, char *argv[]){
+
+  FILE *archivo, *entrada;
   clock_t t_inicio, t_final;
   double t_intervalo;
+  
+  entrada = fopen(argv[1], "r");
+  archivo = fopen("Tiempos.csv", "a");
 
-  if(argc != 2){
-    printf("Porfavor ingresa la cantidad de números a ordenar, por ejemplo [user@equipo], %s, 100", argv[0]);
+  if(!entrada){
+    printf("No se pudo abrir el archivo");
+    exit(1);
+  }
+
+  if(!archivo){
+    printf("No se pudo abrir el archivo");
+    exit(1);
+  }
+
+  fprintf(archivo, "\nShell,");
+
+  if(argc < 3){
+    printf("Porfavor ingresa el nombre del archivo de los numeros y la cantidad de números a ordenar, por ejemplo [user@equipo], %s numeros.txt 100", argv[0]);
     exit(1);
   }
 
   int n, *A;
 
-  n = atoi(argv[1]);
-  A = malloc(n * sizeof(int));
+  for(int i = 2; i < argc; i++){
+    rewind(entrada);
+    n = atoi(argv[i]);
+    A = malloc(n * sizeof(int));
+    
+    if(A == NULL){
+      printf("Error al intentar reserver memoria para %d elementos\n", n);
+      exit(1);
+    }
+    
+    for(int j = 0; j < n; j++){
+      fscanf(entrada, "%d", &A[j]);
+    }
+    
+    t_inicio = clock();
+    Shell(A, n);
+    t_final = clock();
+    
+    
+    t_intervalo = (double)(t_final - t_inicio) / CLOCKS_PER_SEC;
+    fprintf(archivo, "%.10f,", t_intervalo);
 
-  if(A == NULL){
-    printf("Error al intentar reserver memoria para %d elementos\n", n);
-    exit(1);
+    printf("Agregado exitosamente el tiempo del ordenamiento shell con %s\n", argv[i]);
+    free(A);
+
   }
 
-  for(int i = 0; i < n; i++){
-    scanf("%d", &A[i]);
-  }
-
-  t_inicio = clock();
-  Shell(A, n);
-  t_final = clock();
-
-  t_intervalo = (double)(t_final - t_inicio) / CLOCKS_PER_SEC;
-  printf("\nTiempo medido: %.10f segundos.", t_intervalo);
-
-  for(int i = 0; i < n; i++){
-    printf("\nNumero[%d]: %d", i, A[i]);
-  }
+  fclose(archivo);
 
   exit(0);
 }
